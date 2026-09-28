@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Petualangan Bahasa Indonesia Kelas IX</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        },
+                        indigoBrand: {
+                            50: '#eef2ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+        }
+        @keyframes popBadge {
+            0% { transform: scale(0.6) rotate(-10deg); opacity: 0; }
+            80% { transform: scale(1.1) rotate(4deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .animate-pop { animation: popBadge 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .hotspot-pulse {
+            animation: pulse-ring 2s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 flex flex-col justify-between bg-slate-100 min-h-screen">
+
+    <header class="bg-indigo-700 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                <div class="bg-yellow-400 text-indigo-950 p-2.5 rounded-2xl font-black text-xl shadow">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-sm sm:text-base leading-tight tracking-wide">PETUALANGAN BAHASA</h1>
+                    <p class="text-[11px] text-indigo-200">SMP Kelas IX • Teks Prosedur & Kosakata</p>
+                </div>
+            </div>
+
+            <!-- Student Profile Badge -->
+            <div id="studentBadgeHeader" class="hidden sm:flex items-center gap-2 bg-indigo-800/80 px-3 py-1.5 rounded-full text-xs font-medium border border-indigo-500/40">
+                <i class="fa-solid fa-user-graduate text-yellow-300"></i>
+                <span id="hdrStudentName">Siswa</span>
+                <span class="text-indigo-400">•</span>
+                <span id="hdrStudentClass">IX</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTeacherModal()" class="text-xs bg-indigo-800 hover:bg-indigo-900 px-3 py-2 rounded-xl border border-indigo-400/30 flex items-center gap-1.5 transition text-indigo-100 font-semibold shadow-sm">
+                    <i class="fa-solid fa-user-shield text-yellow-400"></i>
+                    <span class="hidden md:inline">Dashboard Guru</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-6">
+
+        <!-- GLOBAL LEARNING PROGRESS BAR -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-2">
+            <div class="flex flex-wrap justify-between items-center text-xs font-semibold text-slate-600 gap-2">
+                <div class="flex items-center gap-2">
+                    <span class="bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg text-[11px] font-bold">
+                        <i class="fa-solid fa-chart-line mr-1"></i> Progres Belajar
+                    </span>
+                    <span id="txtProgressPercent" class="text-indigo-600 font-extrabold text-sm">0%</span>
+                    <span class="text-slate-400">•</span>
+                    <span id="txtCompletedCount" class="text-slate-500">0 / 6 Aktivitas</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg font-bold border border-amber-200">
+                        <i class="fa-solid fa-star text-yellow-500"></i> Skor: <span id="txtGlobalScore">0</span>
+                    </span>
+                </div>
+            </div>
+            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200/60">
+                <div id="barProgress" class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-500 w-0"></div>
+            </div>
+        </div>
+
+        <section id="view-home" class="space-y-6">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-br from-indigo-700 via-indigo-800 to-purple-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="max-w-3xl space-y-4 relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/20 text-yellow-300 text-xs font-extrabold border border-yellow-400/30">
+                        <i class="fa-solid fa-sparkles"></i> Media Pembelajaran Interaktif Bahasa Indonesia
+                    </div>
+                    <h2 class="text-2xl sm:text-4xl font-black tracking-tight leading-snug">
+                        Petualangan Bahasa Indonesia Kelas IX
+                    </h2>
+                    <p class="text-indigo-100 text-xs sm:text-sm leading-relaxed">
+                        Ubah petikan cerpen menjadi teks prosedur runtut, jelajahi rahasia kata serapan, dan bedah informasi kritis dalam infografik visual modern!
+                    </p>
+
+                    <!-- Teacher Name Tag (Editable) -->
+                    <div class="inline-flex items-center gap-2 bg-indigo-950/60 px-3.5 py-1.5 rounded-xl border border-indigo-400/20 text-xs text-indigo-200">
+                        <i class="fa-solid fa-chalkboard-user text-yellow-400"></i>
+                        <span>Pengajar:</span>
+                        <input type="text" id="inputTeacherName" value="Ibu Guru Bahasa Indonesia, S.Pd." onchange="saveTeacherName()" class="bg-transparent text-white font-bold outline-none border-b border-indigo-400/40 focus:border-yellow-400 px-1">
+                    </div>
+
+                    <!-- Student Identity Card -->
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 sm:p-5 rounded-2xl space-y-3 mt-4">
+                        <h3 class="text-xs font-bold text-yellow-300 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-id-card-clip"></i> Profil Peserta Didik
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[11px] text-indigo-200 mb-1">Nama Lengkap</label>
+                                <input type="text" id="inputNama" placeholder="Contoh: Ananda Rizky" class="w-full px-3 py-2 rounded-xl bg-white text-slate-800 text-xs font-semibold focus:ring-2 focus:ring-yellow-400 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-indigo-200 mb-1">Kelas</label>
+                                <input type="text" id="inputKelas" placeholder="IX-1" class="w-full px-3 py-2 rounded-xl bg-white text-slate-800 text-xs font-semibold focus:ring-2 focus:ring-yellow-400 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-indigo-200 mb-1">No. Absen</label>
+                                <input type="number" id="inputAbsen" placeholder="05" class="w-full px-3 py-2 rounded-xl bg-white text-slate-800 text-xs font-semibold focus:ring-2 focus:ring-yellow-400 outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Navigation Links -->
+                    <div class="pt-2 flex flex-wrap gap-2">
+                        <button onclick="saveStudentIdentity('modul-1')" class="flex-1 sm:flex-none px-6 py-3 bg-yellow-400 hover:bg-yellow-300 text-indigo-950 font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+                            <i class="fa-solid fa-rocket"></i> Mulai Petualangan
+                        </button>
+                        <button onclick="openConfiguredDoc('materi')" class="px-4 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-xl border border-white/20 transition flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-file-word text-emerald-300"></i> Materi Lengkap Docs
+                        </button>
+                        <button onclick="openConfiguredDoc('lkpd')" class="px-4 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-xl border border-white/20 transition flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-clipboard-list text-yellow-300"></i> LKPD
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                
+                <!-- Card Petualangan 1 -->
+                <div onclick="saveStudentIdentity('modul-1')" class="bg-white p-5 rounded-3xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition cursor-pointer group space-y-3 relative overflow-hidden">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                        📖
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full">Petualangan 1</span>
+                    <h3 class="text-base font-bold text-slate-800 group-hover:text-indigo-600 transition">Cerpen Menjadi Teks Prosedur</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Analisis petikan cerpen, ekstraksi kata kerja imperatif, dan susun prosedur runtut.</p>
+                    <div class="pt-2 flex items-center justify-between text-xs font-extrabold text-indigo-600 border-t border-slate-100">
+                        <span>Buka Modul 1</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                    </div>
+                </div>
+
+                <!-- Card Petualangan 2 -->
+                <div onclick="saveStudentIdentity('modul-2')" class="bg-white p-5 rounded-3xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition cursor-pointer group space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                        🔤
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full">Petualangan 2</span>
+                    <h3 class="text-base font-bold text-slate-800 group-hover:text-indigo-600 transition">Menjelajah Kata Serapan</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Eksplorasi penyerapan bahasa daerah & asing, adopsi, adaptasi, dan penerjemahan.</p>
+                    <div class="pt-2 flex items-center justify-between text-xs font-extrabold text-amber-600 border-t border-slate-100">
+                        <span>Buka Modul 2</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                    </div>
+                </div>
+
+                <!-- Card Petualangan 3 -->
+                <div onclick="saveStudentIdentity('modul-3')" class="bg-white p-5 rounded-3xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition cursor-pointer group space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                        🖼️
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">Petualangan 3</span>
+                    <h3 class="text-base font-bold text-slate-800 group-hover:text-indigo-600 transition">Membaca Infografik Prosedur</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Bedah pesan visual, tata letak, informasi tersurat & tersirat dalam infografik.</p>
+                    <div class="pt-2 flex items-center justify-between text-xs font-extrabold text-emerald-600 border-t border-slate-100">
+                        <span>Buka Modul 3</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                    </div>
+                </div>
+
+                <!-- Card Latihan Interaktif -->
+                <div onclick="saveStudentIdentity('latihan')" class="bg-white p-5 rounded-3xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition cursor-pointer group space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                        ⚡
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">Latihan Interaktif</span>
+                    <h3 class="text-base font-bold text-slate-800 group-hover:text-indigo-600 transition">20 Soal Formatif Acak</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Latihan variasi pilihan ganda, benar/salah, mencocokkan, dan HOTS dengan feedback instant.</p>
+                    <div class="pt-2 flex items-center justify-between text-xs font-extrabold text-blue-600 border-t border-slate-100">
+                        <span>Kerjakan Latihan</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                    </div>
+                </div>
+
+                <!-- Card Tantangan Akhir -->
+                <div onclick="saveStudentIdentity('tantangan')" class="bg-white p-5 rounded-3xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition cursor-pointer group space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                        🎯
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full">Evaluasi Akhir</span>
+                    <h3 class="text-base font-bold text-slate-800 group-hover:text-indigo-600 transition">Tantangan Akhir (15 Soal)</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Uji pemahaman komprehensif, peroleh nilai akhir, dan kirimkan rekap ke guru.</p>
+                    <div class="pt-2 flex items-center justify-between text-xs font-extrabold text-purple-600 border-t border-slate-100">
+                        <span>Mulai Tantangan</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                    </div>
+                </div>
+
+                <!-- Card Rekap Nilai -->
+                <div onclick="saveStudentIdentity('rekap')" class="bg-white p-5 rounded-3xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition cursor-pointer group space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                        📊
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider bg-rose-50 text-rose-700 px-2.5 py-1 rounded-full">Laporan Hasil</span>
+                    <h3 class="text-base font-bold text-slate-800 group-hover:text-indigo-600 transition">Rekap Nilai & Integrasi</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Cetak hasil belajar dan kirimkan data nilai ke Google Sheets Guru.</p>
+                    <div class="pt-2 flex items-center justify-between text-xs font-extrabold text-rose-600 border-t border-slate-100">
+                        <span>Lihat Hasil Belajar</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="view-modul-1" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <!-- Header Modul 1 -->
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">📖</span>
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-extrabold text-slate-800">Modul 1: Cerpen Menjadi Teks Prosedur</h2>
+                            <p class="text-xs text-slate-500">Menganalisis aksi naratif dan mengubahnya menjadi petunjuk kerja terstruktur</p>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('home')" class="text-xs text-slate-500 hover:text-slate-800 font-bold bg-slate-100 px-3 py-1.5 rounded-xl">
+                        <i class="fa-solid fa-xmark"></i> Tutup
+                    </button>
+                </div>
+
+                <!-- Theory Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-700">
+                    <div class="p-4 bg-indigo-50/70 border border-indigo-100 rounded-2xl space-y-2">
+                        <h4 class="font-extrabold text-indigo-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-book-open text-indigo-600"></i> Karakteristik & Struktur Teks Prosedur
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-700 text-xs">
+                            <li><strong>Pengertian:</strong> Teks yang berisi petunjuk langkah-langkah bertahap untuk mencapai suatu tujuan.</li>
+                            <li><strong>Tujuan:</strong> Memandu pembaca agar dapat melakukan atau membuat sesuatu secara benar dan aman.</li>
+                            <li><strong>Struktur Utama:</strong>
+                                <ol class="list-decimal list-inside pl-4 text-[11px] text-slate-600 mt-1 space-y-0.5">
+                                    <li><strong>Judul:</strong> Menyebutkan aktivitas yang dilakukan.</li>
+                                    <li><strong>Tujuan:</strong> Pengantar hasil akhir kegiatan.</li>
+                                    <li><strong>Alat & Bahan:</strong> Daftar perlengkapan beserta takarannya.</li>
+                                    <li><strong>Langkah-langkah:</strong> Tahapan kronologis berseri.</li>
+                                </ol>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 bg-purple-50/70 border border-purple-100 rounded-2xl space-y-2">
+                        <h4 class="font-extrabold text-purple-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> Kaidah Kebahasaan
+                        </h4>
+                        <ul class="space-y-1.5 text-xs text-slate-700">
+                            <li><strong>Kata Kerja Imperatif (Perintah):</strong> <i>Tuangkan, aduklah, bersihkan, potonglah.</i></li>
+                            <li><strong>Kata Kerja Tindakan:</strong> Menggambarkan aksi fisik nyata (<i>mengupas, memanaskan</i>).</li>
+                            <li><strong>Konjungsi Temporal:</strong> Penanda urutan waktu (<i>pertama, selanjutnya, setelah itu, akhirnya</i>).</li>
+                            <li><strong>Kalimat Lugu & Jelas:</strong> Menghindari ungkapan kiasan agar instruksi mudah dipahami.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-extrabold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-black">A</span>
+                            Aktivitas A: Ekstraksi Cerpen & Urutkan Langkah
+                        </h3>
+                        <span class="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">+20 Poin</span>
+                    </div>
+
+                    <!-- Cerpen Stimulus Box -->
+                    <div class="bg-amber-50/80 p-4 rounded-2xl border border-amber-200/80 text-xs sm:text-sm text-slate-800 space-y-2">
+                        <div class="font-bold text-amber-900 flex items-center gap-2 text-xs uppercase tracking-wider">
+                            <i class="fa-solid fa-scroll"></i> Petikan Cerpen: "Wedang Uwuh Bu Ani"
+                        </div>
+                        <p class="italic leading-relaxed text-slate-700 text-xs sm:text-sm">
+                            "Di sore yang dingin, Bu Ani menyiapkan minuman hangat khas Nusantara untuk tamunya. Pertama-tama, ia mencuci bersih jahe, kayu secang, daun pala, dan cengkih di bawah air mengalir. Setelah dikeringkan sejenak, Bu Ani mememarkan jahe menggunakan ulekan agar aromanya keluar. Selanjutnya, ia memasukkan seluruh bahan rempah ke dalam panci berisi 500 ml air lalu memanaskannya hingga mendidih dan berwarna merah terang. Terakhir, ia menyaring air seduhan ke dalam cangkir dan menambahkan satu sendok gula batu sebelum disajikan."
+                        </p>
+                    </div>
+
+                    <!-- Interactive Drag/Sort Container -->
+                    <div class="space-y-3">
+                        <p class="text-xs font-semibold text-slate-600">Urutkan langkah kerja di bawah ini agar menjadi prosedur yang tepat berdasarkan cerpen di atas!</p>
+                        
+                        <div id="m1-step-container" class="space-y-2 max-w-2xl">
+                            <!-- JS will inject sortable steps -->
+                        </div>
+
+                        <div class="flex items-center gap-3 pt-2">
+                            <button onclick="checkM1Ordering()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow transition flex items-center gap-2">
+                                <i class="fa-solid fa-check"></i> Periksa Urutan
+                            </button>
+                            <span id="m1-ordering-feedback" class="text-xs font-bold"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-extrabold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-black">B</span>
+                            Aktivitas B: Tulis Teks Prosedur Mandiri
+                        </h3>
+                        <span class="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">+30 Poin</span>
+                    </div>
+
+                    <p class="text-xs text-slate-600">
+                        Berdasarkan petikan cerpen "Wedang Uwuh Bu Ani" di atas, ubahlah menjadi Teks Prosedur yang utuh pada formulir di bawah ini!
+                    </p>
+
+                    <div class="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Judul Teks Prosedur:</label>
+                            <input type="text" id="m1FormJudul" placeholder="Contoh: Cara Membuat Wedang Uwuh Tradisional" class="w-full p-2.5 rounded-xl border border-slate-300 font-semibold focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Tujuan:</label>
+                            <textarea id="m1FormTujuan" rows="2" placeholder="Contoh: Petunjuk ini dibuat untuk memandu pembaca menyajikan minuman hangat kaya rempah..." class="w-full p-2.5 rounded-xl border border-slate-300 font-semibold focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Alat dan Bahan:</label>
+                            <textarea id="m1FormAlat" rows="2" placeholder="Contoh: Jahe, kayu secang, daun pala, cengkih, gula batu, panci, air 500ml..." class="w-full p-2.5 rounded-xl border border-slate-300 font-semibold focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Langkah-langkah (Gunakan kata kerja imperatif):</label>
+                            <textarea id="m1FormLangkah" rows="3" placeholder="1. Cuci bersih semua rempah... 2. Memarkan jahe... 3. Rebus bahan..." class="w-full p-2.5 rounded-xl border border-slate-300 font-semibold focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                        </div>
+
+                        <div class="pt-2 flex items-center justify-between">
+                            <button onclick="evaluateM1Form()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs shadow transition flex items-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan & Evaluasi Jawaban
+                            </button>
+                        </div>
+                        <div id="m1FormFeedback" class="hidden p-3 rounded-xl text-xs font-medium border"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-modul-2" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <!-- Header Modul 2 -->
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🔤</span>
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-extrabold text-slate-800">Modul 2: Menjelajah Kata Serapan</h2>
+                            <p class="text-xs text-slate-500">Menelaah proses penyerapan kosakata dari bahasa daerah dan asing</p>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('home')" class="text-xs text-slate-500 hover:text-slate-800 font-bold bg-slate-100 px-3 py-1.5 rounded-xl">
+                        <i class="fa-solid fa-xmark"></i> Tutup
+                    </button>
+                </div>
+
+                <!-- Theory Box -->
+                <div class="space-y-4 text-xs sm:text-sm text-slate-700">
+                    <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-2">
+                        <h4 class="font-bold text-amber-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-language text-amber-600"></i> Mengapa Bahasa Indonesia Menyerap Kosakata?
+                        </h4>
+                        <p class="text-xs text-slate-700 leading-relaxed">
+                            Bahasa Indonesia bersifat terbuka dan dinamis. Penyerapan kosakata terjadi karena kebutuhan penamaan konsep baru dalam ilmu pengetahuan, teknologi, seni, dan budaya yang belum memiliki padanan kata sebelumnya.
+                        </p>
+                    </div>
+
+                    <!-- 4 Process Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-1">
+                            <span class="text-[10px] font-black uppercase text-amber-600 bg-amber-100 px-2 py-0.5 rounded-md">1. Adopsi</span>
+                            <h5 class="font-bold text-xs text-slate-800">Tanpa Perubahan</h5>
+                            <p class="text-[11px] text-slate-500">Menyerap kata asing secara utuh baik ejaan maupun lafalnya.</p>
+                            <span class="text-[11px] font-bold text-indigo-700 block pt-1">Contoh: Data, Supermarket</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-1">
+                            <span class="text-[10px] font-black uppercase text-amber-600 bg-amber-100 px-2 py-0.5 rounded-md">2. Adaptasi</span>
+                            <h5 class="font-bold text-xs text-slate-800">Penyesuaian Ejaan</h5>
+                            <p class="text-[11px] text-slate-500">Ejaan/lafal disesuaikan kaidah bahasa Indonesia.</p>
+                            <span class="text-[11px] font-bold text-indigo-700 block pt-1">Contoh: Camera → Kamera</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-1">
+                            <span class="text-[10px] font-black uppercase text-amber-600 bg-amber-100 px-2 py-0.5 rounded-md">3. Penerjemahan</span>
+                            <h5 class="font-bold text-xs text-slate-800">Mencari Padanan</h5>
+                            <p class="text-[11px] text-slate-500">Mengambil konsep asing lalu menerjemahkan maknanya.</p>
+                            <span class="text-[11px] font-bold text-indigo-700 block pt-1">Contoh: Download → Unduh</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-1">
+                            <span class="text-[10px] font-black uppercase text-amber-600 bg-amber-100 px-2 py-0.5 rounded-md">4. Kreasi</span>
+                            <h5 class="font-bold text-xs text-slate-800">Penciptaan Kata</h5>
+                            <p class="text-[11px] text-slate-500">Membuat kata baru mirip konsep asal walau fisik berbeda.</p>
+                            <span class="text-[11px] font-bold text-indigo-700 block pt-1">Contoh: Shuttle → Ulang-Alik</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Linguistic Table -->
+                <div class="border-t border-slate-200 pt-6 space-y-3">
+                    <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-table text-amber-600"></i> Tabel Analisis Linguistik Kata Serapan
+                    </h3>
+                    <div class="overflow-x-auto rounded-2xl border border-slate-200 custom-scrollbar">
+                        <table class="w-full text-left text-xs text-slate-700 min-w-[500px]">
+                            <thead class="bg-amber-100/70 text-amber-950 font-bold uppercase text-[10px] tracking-wider">
+                                <tr>
+                                    <th class="p-3">Kata Bahasa Indonesia</th>
+                                    <th class="p-3">Bahasa Asal</th>
+                                    <th class="p-3">Bentuk Asal</th>
+                                    <th class="p-3">Proses Penyerapan</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 bg-white">
+                                <tr class="hover:bg-amber-50/40">
+                                    <td class="p-3 font-bold text-indigo-700">Apotek</td>
+                                    <td class="p-3">Belanda</td>
+                                    <td class="p-3 italic">Apotheek</td>
+                                    <td class="p-3 font-semibold text-emerald-700">Adaptasi</td>
+                                </tr>
+                                <tr class="hover:bg-amber-50/40">
+                                    <td class="p-3 font-bold text-indigo-700">Tetikus</td>
+                                    <td class="p-3">Inggris</td>
+                                    <td class="p-3 italic">Mouse</td>
+                                    <td class="p-3 font-semibold text-purple-700">Penerjemahan</td>
+                                </tr>
+                                <tr class="hover:bg-amber-50/40">
+                                    <td class="p-3 font-bold text-indigo-700">Plaza</td>
+                                    <td class="p-3">Spanyol / Inggris</td>
+                                    <td class="p-3 italic">Plaza</td>
+                                    <td class="p-3 font-semibold text-blue-700">Adopsi</td>
+                                </tr>
+                                <tr class="hover:bg-amber-50/40">
+                                    <td class="p-3 font-bold text-indigo-700">Gudeg</td>
+                                    <td class="p-3">Jawa (Daerah)</td>
+                                    <td class="p-3 italic">Gudheg</td>
+                                    <td class="p-3 font-semibold text-emerald-700">Adaptasi</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-extrabold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                            <i class="fa-solid fa-gamepad text-amber-600"></i> Permainan Interaktif: Detektif Kata
+                        </h3>
+                        <span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full">+25 Poin</span>
+                    </div>
+
+                    <div id="m2GameBox" class="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-4 max-w-xl mx-auto">
+                        <div class="flex items-center justify-between text-xs text-slate-500 border-b pb-2">
+                            <span>Tebak Asal Bahasa & Proses Kata:</span>
+                            <span id="m2GameProgress" class="font-bold text-indigo-600">Kata 1 / 4</span>
+                        </div>
+
+                        <div class="text-center py-2">
+                            <span id="m2TargetWord" class="text-2xl font-black text-indigo-700 tracking-wider">KUALITAS</span>
+                            <p id="m2TargetOrigin" class="text-xs text-slate-500 mt-1">Bentuk Asal: <i>Kwaliteit / Quality</i></p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-700">1. Pilihlah Bahasa Asal yang tepat:</label>
+                            <div id="m2OptionsOrigin" class="grid grid-cols-2 gap-2"></div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-700">2. Pilihlah Proses Penyerapannya:</label>
+                            <div id="m2OptionsProcess" class="grid grid-cols-2 gap-2"></div>
+                        </div>
+
+                        <button onclick="checkM2GameAnswer()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs shadow transition">
+                            Cek Jawaban Detektif
+                        </button>
+                        <div id="m2GameFeedback" class="hidden p-3 rounded-xl text-xs font-bold text-center"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-modul-3" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <!-- Header Modul 3 -->
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🖼️</span>
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-extrabold text-slate-800">Modul 3: Membaca Infografik Prosedur</h2>
+                            <p class="text-xs text-slate-500">Menganalisis teks, grafik, ikon, dan urutan informasi visual</p>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('home')" class="text-xs text-slate-500 hover:text-slate-800 font-bold bg-slate-100 px-3 py-1.5 rounded-xl">
+                        <i class="fa-solid fa-xmark"></i> Tutup
+                    </button>
+                </div>
+
+                <!-- Theory summary -->
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    <strong>Infografik Prosedur</strong> menyajikan informasi petunjuk teknis dengan perpaduan warna, gambar, ikon visual, dan susunan tata letak ringkas agar mudah dipahami pembaca secara instan.
+                </p>
+
+                <div class="bg-slate-900 text-white rounded-3xl p-5 sm:p-8 shadow-xl border border-slate-800 space-y-6 relative overflow-hidden max-w-3xl mx-auto">
+                    <!-- Infographic Banner Header -->
+                    <div class="text-center border-b border-slate-800 pb-4 space-y-1">
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-extrabold px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-500/30">
+                            INFOGRAFIK PROSEDUR LINGKUNGAN
+                        </span>
+                        <h3 class="text-xl sm:text-2xl font-black text-white">4 LANGKAH PEMBUATAN ECO-ENZYME RUMAH TANGGA</h3>
+                        <p class="text-xs text-slate-400">Solusi Olah Sampah Organik Menjadi Cairan Serbaguna</p>
+                    </div>
+
+                    <!-- Interactive Infographic Hotspots Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 relative z-10">
+                        <!-- Step 1 Hotspot -->
+                        <div onclick="showInfographicDetail(1)" class="bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 p-4 rounded-2xl text-center space-y-2 cursor-pointer transition transform hover:-translate-y-1 shadow-md group">
+                            <div class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center mx-auto text-xs group-hover:scale-110 transition">1</div>
+                            <div class="text-2xl">🥭</div>
+                            <h5 class="font-extrabold text-xs text-emerald-400">Siapkan Bahan</h5>
+                            <p class="text-[11px] text-slate-300">Kulit buah segar, gula molase, & air bersih.</p>
+                            <span class="text-[10px] text-slate-400 font-semibold underline block pt-1">Klik Analisis</span>
+                        </div>
+
+                        <!-- Step 2 Hotspot -->
+                        <div onclick="showInfographicDetail(2)" class="bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 p-4 rounded-2xl text-center space-y-2 cursor-pointer transition transform hover:-translate-y-1 shadow-md group">
+                            <div class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center mx-auto text-xs group-hover:scale-110 transition">2</div>
+                            <div class="text-2xl">⚖️</div>
+                            <h5 class="font-extrabold text-xs text-emerald-400">Rasio 1 : 3 : 10</h5>
+                            <p class="text-[11px] text-slate-300">1 Gula : 3 Sampah Buah : 10 Air.</p>
+                            <span class="text-[10px] text-slate-400 font-semibold underline block pt-1">Klik Analisis</span>
+                        </div>
+
+                        <!-- Step 3 Hotspot -->
+                        <div onclick="showInfographicDetail(3)" class="bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 p-4 rounded-2xl text-center space-y-2 cursor-pointer transition transform hover:-translate-y-1 shadow-md group">
+                            <div class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center mx-auto text-xs group-hover:scale-110 transition">3</div>
+                            <div class="text-2xl">🫙</div>
+                            <h5 class="font-extrabold text-xs text-emerald-400">Simpan Kedap</h5>
+                            <p class="text-[11px] text-slate-300">Tutup dalam wadah plastik bermulut lebar.</p>
+                            <span class="text-[10px] text-slate-400 font-semibold underline block pt-1">Klik Analisis</span>
+                        </div>
+
+                        <!-- Step 4 Hotspot -->
+                        <div onclick="showInfographicDetail(4)" class="bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 p-4 rounded-2xl text-center space-y-2 cursor-pointer transition transform hover:-translate-y-1 shadow-md group">
+                            <div class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center mx-auto text-xs group-hover:scale-110 transition">4</div>
+                            <div class="text-2xl">⏳</div>
+                            <h5 class="font-extrabold text-xs text-emerald-400">Fermentasi 3 Bulan</h5>
+                            <p class="text-[11px] text-slate-300">Buka gas pada minggu pertama. Panen!</p>
+                            <span class="text-[10px] text-slate-400 font-semibold underline block pt-1">Klik Analisis</span>
+                        </div>
+                    </div>
+
+                    <!-- Hotspot Detail Explanation Popup -->
+                    <div id="m3HotspotBox" class="bg-slate-800 p-4 rounded-2xl border border-emerald-500/40 text-xs space-y-1 text-slate-200">
+                        <span class="font-extrabold text-emerald-400 block flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb"></i> Petunjuk Analisis Visual:
+                        </span>
+                        <p id="m3HotspotText">Klik salah satu kotak langkah di atas untuk membedah elemen visual dan pesan kritisnya.</p>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-extrabold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                            <i class="fa-solid fa-brain text-emerald-600"></i> Aktivitas Bedah Kritis Infografik (HOTS)
+                        </h3>
+                        <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">+25 Poin</span>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                        <p class="font-bold text-slate-800">Soal HOTS: Mengapa dalam infografik disarankan menggunakan wadah plastik, BUKAN wadah kaca untuk fermentasi?</p>
+                        
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 cursor-pointer">
+                                <input type="radio" name="m3Hots" value="A" class="w-4 h-4 text-emerald-600">
+                                <span>A. Karena wadah kaca terlalu bening sehingga mikroba mati terinfeksi sinar matahari.</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 cursor-pointer">
+                                <input type="radio" name="m3Hots" value="B" class="w-4 h-4 text-emerald-600">
+                                <span>B. Karena wadah kaca berisiko pecah atau meledak akibat penumpukan gas hasil fermentasi.</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 cursor-pointer">
+                                <input type="radio" name="m3Hots" value="C" class="w-4 h-4 text-emerald-600">
+                                <span>C. Karena wadah plastik lebih murah dibanding wadah kaca di pasaran.</span>
+                            </label>
+                        </div>
+
+                        <button onclick="checkM3Hots()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow transition">
+                            Periksa Analisis HOTS
+                        </button>
+                        <div id="m3HotsFeedback" class="hidden p-3 rounded-xl text-xs font-bold"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-latihan" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <!-- Header Latihan -->
+                <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-4 gap-2">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-extrabold text-slate-800">Latihan Formatif Interaktif</h2>
+                        <p class="text-xs text-slate-500">20 Soal Acak: Teks Prosedur, Kata Serapan, & Infografik</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="quizBadgeNum" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-200">
+                            Soal 1 / 20
+                        </span>
+                        <button onclick="shuffleAndResetLatihan()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl transition">
+                            <i class="fa-solid fa-shuffle"></i> Acak Ulang
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Main Card -->
+                <div id="quizContainer" class="max-w-3xl mx-auto space-y-4">
+                    <span id="quizCatBadge" class="inline-block text-[10px] font-black px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-800 uppercase">
+                        Kategori: Cerpen -> Prosedur
+                    </span>
+
+                    <h3 id="quizQuestionText" class="text-sm sm:text-base font-bold text-slate-800 leading-relaxed">
+                        Pertanyaan latihan akan ditampilkan di sini...
+                    </h3>
+
+                    <!-- Dynamic Options Container -->
+                    <div id="quizOptionsList" class="space-y-2 pt-2"></div>
+
+                    <!-- Instant Feedback & Explanation Box -->
+                    <div id="quizExplanationBox" class="hidden p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-1">
+                        <span id="quizFeedbackHeader" class="font-extrabold text-sm block"></span>
+                        <p id="quizExplanationText" class="leading-relaxed"></p>
+                    </div>
+
+                    <!-- Navigation Footer -->
+                    <div class="pt-4 flex items-center justify-between border-t border-slate-100">
+                        <button onclick="navigateLatihan(-1)" id="btnQuizPrev" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition disabled:opacity-40" disabled>
+                            <i class="fa-solid fa-arrow-left"></i> Sebelumnya
+                        </button>
+                        
+                        <button onclick="navigateLatihan(1)" id="btnQuizNext" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow transition">
+                            Selanjutnya <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-tantangan" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <!-- Header Tantangan -->
+                <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-4 gap-2">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-extrabold text-slate-800">Tantangan Akhir (Evaluasi Sumatif)</h2>
+                        <p class="text-xs text-slate-500">15 Soal Pilihan Ganda Penentu Nilai Akhir</p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div class="bg-rose-50 text-rose-600 px-3 py-1.5 rounded-xl border border-rose-200 font-mono font-bold text-xs flex items-center gap-1.5">
+                            <i class="fa-regular fa-clock"></i>
+                            <span id="evalTimer">00:00</span>
+                        </div>
+                        <span id="evalProgressNum" class="text-xs font-extrabold text-purple-700 bg-purple-50 px-3 py-1.5 rounded-xl border border-purple-200">
+                            Soal 1 / 15
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Eval Card Container -->
+                <div id="evalBox" class="max-w-3xl mx-auto space-y-4">
+                    <h3 id="evalQuestionPrompt" class="text-sm sm:text-base font-bold text-slate-800 leading-relaxed">
+                        Pertanyaan tantangan akhir...
+                    </h3>
+
+                    <div id="evalOptionsList" class="space-y-2 pt-2"></div>
+
+                    <div class="pt-4 flex items-center justify-between border-t border-slate-100">
+                        <button onclick="prevEvalQuestion()" id="btnEvalPrev" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition disabled:opacity-40" disabled>
+                            <i class="fa-solid fa-arrow-left"></i> Sebelumnya
+                        </button>
+                        
+                        <button onclick="nextEvalQuestion()" id="btnEvalNext" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow transition">
+                            Selanjutnya <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-rekap" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm max-w-3xl mx-auto space-y-6">
+                <div class="text-center border-b border-slate-100 pb-6 space-y-2">
+                    <div class="w-16 h-16 rounded-3xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-3xl mx-auto shadow-inner">
+                        🎓
+                    </div>
+                    <h2 class="text-2xl font-black text-slate-800">Laporan Hasil Belajar Peserta Didik</h2>
+                    <p class="text-xs text-slate-500">Rekapitulasi Nilai Asesmen & Analisis Ketuntasan</p>
+                </div>
+
+                <!-- Identity Summary -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+                    <div>
+                        <span class="text-[10px] text-slate-400 font-bold block">NAMA SISWA</span>
+                        <span id="rptNama" class="font-bold text-slate-800">-</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 font-bold block">KELAS / ABSEN</span>
+                        <span id="rptKelasAbsen" class="font-bold text-slate-800">- / -</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 font-bold block">WAKTU UJIAN</span>
+                        <span id="rptWaktu" class="font-bold text-slate-800">00:00</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 font-bold block">STATUS KETUNTASAN</span>
+                        <span id="rptStatus" class="font-extrabold text-indigo-600">-</span>
+                    </div>
+                </div>
+
+                <!-- Big Score Gauge -->
+                <div class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-950 text-white rounded-3xl p-6 text-center space-y-2 shadow-xl">
+                    <span class="text-xs text-indigo-200 uppercase font-extrabold tracking-wider">Nilai Evaluasi Akhir</span>
+                    <div id="rptScoreBig" class="text-6xl font-black text-yellow-400">0</div>
+                    <p id="rptScoreDetail" class="text-xs text-indigo-100">0 dari 15 Soal Benar (0%)</p>
+                </div>
+
+                <!-- Recommendation box -->
+                <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-1">
+                    <h4 class="font-bold text-amber-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-compass"></i> Rekomendasi Tindak Lanjut:
+                    </h4>
+                    <p id="rptRecommendation" class="text-xs text-amber-800 leading-relaxed">
+                        Selesaikan Tantangan Akhir untuk memperoleh masukan analitis otomatis.
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                    <button onclick="sendScoresToGoogleSheets()" id="btnSubmitSheets" class="flex-1 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-2xl shadow transition flex items-center justify-center gap-2 text-xs">
+                        <i class="fa-solid fa-paper-plane"></i> Kirim Nilai ke Google Sheets Guru
+                    </button>
+                    <button onclick="window.print()" class="px-5 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition text-xs flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-print"></i> Cetak Rekap PDF
+                    </button>
+                </div>
+                <div id="sheetsSubmitStatus" class="text-center text-xs font-bold text-slate-600"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="teacherModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 font-black flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-slate-800 text-base sm:text-lg">Dashboard Guru & Integrasi Google</h3>
+                        <p class="text-xs text-slate-500">Konfigurasi Spreadsheet, Docs, dan Analitik Nilai</p>
+                    </div>
+                </div>
+                <button onclick="toggleTeacherModal()" class="text-slate-400 hover:text-slate-800 text-2xl font-bold">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Dashboard Analytics Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-2xl text-center">
+                    <span class="text-[10px] text-indigo-600 font-bold uppercase block">Total Peserta</span>
+                    <span id="dashTotal" class="text-xl font-black text-indigo-900">0</span>
+                </div>
+                <div class="p-3 bg-emerald-50 border border-emerald-100 rounded-2xl text-center">
+                    <span class="text-[10px] text-emerald-600 font-bold uppercase block">Rata-rata Nilai</span>
+                    <span id="dashAvg" class="text-xl font-black text-emerald-900">0</span>
+                </div>
+                <div class="p-3 bg-purple-50 border border-purple-100 rounded-2xl text-center">
+                    <span class="text-[10px] text-purple-600 font-bold uppercase block">Tuntas (≥75)</span>
+                    <span id="dashPass" class="text-xl font-black text-purple-900">0</span>
+                </div>
+                <div class="p-3 bg-rose-50 border border-rose-100 rounded-2xl text-center">
+                    <span class="text-[10px] text-rose-600 font-bold uppercase block">Remedial (<75)</span>
+                    <span id="dashFail" class="text-xl font-black text-rose-900">0</span>
+                </div>
+            </div>
+
+            <!-- Config Form -->
+            <div class="space-y-4 text-xs">
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                    <h4 class="font-bold text-slate-800 uppercase text-[11px]">1. Configuration Web App Google Apps Script</h4>
+                    <input type="text" id="cfgScriptUrl" class="w-full p-2.5 rounded-xl border border-slate-300 font-mono text-xs focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://script.google.com/macros/s/.../exec">
+                    <p class="text-[11px] text-slate-500">Tempelkan URL Web App hasil deploy Google Apps Script Anda di sini.</p>
+                </div>
+
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                    <h4 class="font-bold text-slate-800 uppercase text-[11px]">2. Configuration Links Google Documents</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Materi Lengkap Docs:</label>
+                            <input type="text" id="cfgDocsMateri" class="w-full p-2 rounded-lg border font-mono text-xs">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">LKPD Docs:</label>
+                            <input type="text" id="cfgDocsLKPD" class="w-full p-2 rounded-lg border font-mono text-xs">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="saveTeacherConfigurations()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow transition">
+                    Simpan Seluruh Konfigurasi
+                </button>
+            </div>
+
+            <!-- GAS Code Exporter Section -->
+            <div class="border-t border-slate-200 pt-4 space-y-2">
+                <h4 class="font-bold text-xs text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-code text-indigo-600"></i> Kode Google Apps Script (Copy & Paste ke Google Sheets):
+                </h4>
+                <div class="relative">
+                    <textarea id="gasCodeBlock" readonly class="w-full h-40 p-3 bg-slate-900 text-emerald-400 font-mono text-[11px] rounded-2xl custom-scrollbar" font-mono>
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = JSON.parse(e.postData.contents);
+    
+    // Auto Insert Header if empty
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        "Timestamp", "Nama Siswa", "Kelas", "No Absen", 
+        "Modul 1", "Modul 2", "Modul 3", "Skor Latihan", 
+        "Nilai Evaluasi", "Persentase", "Status Ketuntasan"
+      ]);
+    }
+    
+    sheet.appendRow([
+      data.timestamp,
+      data.nama,
+      data.kelas,
+      data.absen,
+      data.modul1,
+      data.modul2,
+      data.modul3,
+      data.skorLatihan,
+      data.nilaiEvaluasi,
+      data.persentase,
+      data.status
+    ]);
+    
+    return ContentService.createTextOutput(JSON.stringify({"result": "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({"result": "error", "error": err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</textarea>
+                    <button onclick="copyGasCode()" class="absolute top-2 right-2 px-3 py-1 bg-white/20 hover:bg-white/30 text-white text-[11px] font-bold rounded-lg backdrop-blur">
+                        <i class="fa-solid fa-copy"></i> Salin Kode
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t border-slate-200 py-2.5 sticky bottom-0 z-30 shadow-lg">
+        <div class="max-w-md mx-auto px-4 flex justify-between items-center text-slate-500 text-xs font-semibold">
+            <button onclick="switchTab('home')" class="flex flex-col items-center gap-1 hover:text-indigo-600 transition">
+                <i class="fa-solid fa-house text-base"></i>
+                <span class="text-[10px]">Beranda</span>
+            </button>
+            <button onclick="switchTab('modul-1')" class="flex flex-col items-center gap-1 hover:text-indigo-600 transition">
+                <i class="fa-solid fa-book-open text-base"></i>
+                <span class="text-[10px]">Modul 1</span>
+            </button>
+            <button onclick="switchTab('modul-2')" class="flex flex-col items-center gap-1 hover:text-indigo-600 transition">
+                <i class="fa-solid fa-language text-base"></i>
+                <span class="text-[10px]">Modul 2</span>
+            </button>
+            <button onclick="switchTab('modul-3')" class="flex flex-col items-center gap-1 hover:text-indigo-600 transition">
+                <i class="fa-solid fa-file-image text-base"></i>
+                <span class="text-[10px]">Modul 3</span>
+            </button>
+            <button onclick="switchTab('latihan')" class="flex flex-col items-center gap-1 hover:text-indigo-600 transition">
+                <i class="fa-solid fa-bolt text-base"></i>
+                <span class="text-[10px]">Latihan</span>
+            </button>
+            <button onclick="switchTab('tantangan')" class="flex flex-col items-center gap-1 hover:text-indigo-600 transition">
+                <i class="fa-solid fa-bullseye text-base"></i>
+                <span class="text-[10px]">Evaluasi</span>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // CONFIGURABLE GOOGLE DOCS & APPS SCRIPT URLS
+        let GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_SAMPLE_GAS_URL/exec";
+        let GOOGLE_DOCS_MATERI = "https://docs.google.com/document/d/1_SAMPLE_MATERI_LINK/edit?usp=sharing";
+        let GOOGLE_DOCS_LKPD = "https://docs.google.com/document/d/1_SAMPLE_LKPD_LINK/edit?usp=sharing";
+
+        // Global State Trackers
+        let studentProfile = { nama: "", kelas: "", absen: "" };
+        let globalScore = 0;
+        let completedActivities = new Set();
+
+        // Modul 1 State
+        let m1StepsOrder = [
+            { id: 3, text: "Memanaskan 500 ml air beserta seluruh rempah dalam panci hingga mendidih." },
+            { id: 1, text: "Mencuci bersih jahe, kayu secang, daun pala, dan cengkih dengan air mengalir." },
+            { id: 4, text: "Menyaring air seduhan ke dalam cangkir dan menambahkan satu sendok gula batu." },
+            { id: 2, text: "Mememarkan jahe menggunakan ulekan agar aroma rempah lebih tercium." }
+        ];
+
+        // Modul 2 State
+        const m2GameQuestions = [
+            { word: "KUALITAS", origin: "Belanda / Inggris", optionsOrigin: ["Belanda", "Arab", "Jawa", "Cina"], correctOrigin: "Belanda", optionsProcess: ["Adaptasi", "Adopsi", "Penerjemahan"], correctProcess: "Adaptasi" },
+            { word: "SUPERMARKET", origin: "Inggris", optionsOrigin: ["Inggris", "Belanda", "Sunda", "Arab"], correctOrigin: "Inggris", optionsProcess: ["Adopsi", "Adaptasi", "Penerjemahan"], correctProcess: "Adopsi" },
+            { word: "TETIKUS", origin: "Inggris (Mouse)", optionsOrigin: ["Inggris", "Jawa", "Sanskrit", "Portugis"], correctOrigin: "Inggris", optionsProcess: ["Penerjemahan", "Adopsi", "Adaptasi"], correctProcess: "Penerjemahan" },
+            { word: "AMBULANS", origin: "Belanda / Inggris", optionsOrigin: ["Belanda", "Arab", "Jawa", "Cina"], correctOrigin: "Belanda", optionsProcess: ["Adaptasi", "Adopsi", "Kreasi"], correctProcess: "Adaptasi" }
+        ];
+        let m2GameIndex = 0;
+
+        // Modul 4 Latihan Bank (20 Shuffled Questions)
+        const latihanBank = [
+            { cat: "Cerpen -> Prosedur", prompt: "Manakah kalimat imperatif yang tepat untuk prosedur menyajikan teh?", opts: ["Siti menyukai teh manis.", "Seduhlah teh celup dengan air panas!", "Apakah teh ini manis?", "Teh itu dibuat kemarin."], correct: 1, exp: "Kalimat imperatif ditandai kata kerja perintah berimbuhan -lah/-kan." },
+            { cat: "Cerpen -> Prosedur", prompt: "Langkah pertama saat mengubah narasi cerpen menjadi prosedur adalah...", opts: ["Menghapus seluruh nama tokoh", "Mengidentifikasi urutan tindakan fisik nyata tokoh", "Mengganti judul cerita menjadi puisi", "Memindahkan dialog tanpa perubahan"], correct: 1, exp: "Ekstraksi prosedur berfokus pada langkah aksi nyata tokoh." },
+            { cat: "Kata Serapan", prompt: "Kata 'Kamera' diserap dari 'Camera'. Proses ini dinamakan...", opts: ["Adopsi", "Adaptasi", "Penerjemahan", "Kreasi"], correct: 1, exp: "Adaptasi menyesuaikan ejaan asing ke kaidah Indonesia (C -> K)." },
+            { cat: "Kata Serapan", prompt: "Kata serapan yang diambil utuh tanpa penyesuaian ejaan dinamakan...", opts: ["Adopsi", "Adaptasi", "Penerjemahan", "Inovasi"], correct: 0, exp: "Adopsi menyerap kata asing secara utuh, contoh: Data, Plaza." },
+            { cat: "Infografik Prosedur", prompt: "Fungsi utama ikon dan warna pada infografik prosedur adalah...", opts: ["Sekadar hiasan kosong", "Mempermudah pemahaman langkah secara cepat", "Menggantikan seluruh kata", "Memperbesar ukuran file"], correct: 1, exp: "Visual memandu persepsi visual pembaca menangkap urutan instruksi." },
+            { cat: "Cerpen -> Prosedur", prompt: "Manakah konjungsi temporal yang menyatakan urutan waktu?", opts: ["Dan, atau, tetapi", "Pertama, kemudian, selanjutnya", "Sebab, karena, oleh sebab itu", "Jika, apabila, bilamana"], correct: 1, exp: "Konjungsi temporal menandai tahapan urutan waktu." },
+            { cat: "Kata Serapan", prompt: "Kata 'Unduh' adalah padanan dari 'Download'. Ini contoh proses...", opts: ["Adopsi", "Adaptasi", "Penerjemahan", "Etimologi"], correct: 2, exp: "Penerjemahan menyerap konsep asing dengan mencari padanan katanya." },
+            { cat: "Infografik Prosedur", prompt: "Ciri khas kalimat dalam infografik adalah...", opts: ["Panjang dan berbelit-belit", "Ringkas, lugas, dan komunikatif", "Berisi kiasan mendalam", "Penuh dengan jargon medis"], correct: 1, exp: "Infografik menggunakan kalimat ringkas agar cepat terbaca." },
+            { cat: "Cerpen -> Prosedur", prompt: "Tujuan utama teks prosedur adalah...", opts: ["Menghibur pembaca saat senggang", "Memandu pembaca mencapai hasil kegiatan secara tepat", "Menyampaikan opini politik", "Menceritakan sejarah bangsa"], correct: 1, exp: "Teks prosedur bersifat petunjuk instruksional." },
+            { cat: "Kata Serapan", prompt: "Ejaan baku kata serapan menurut KBBI adalah...", opts: ["Apotik", "Apotek", "Kwalitas", "Praktek"], correct: 1, exp: "Bentuk baku diserap resmi adalah Apotek." },
+            { cat: "Cerpen -> Prosedur", prompt: "Ubahlah narasi: 'Budi memotong kertas' menjadi prosedur!", opts: ["Potonglah kertas tersebut!", "Budi suka memotong kertas.", "Apakah kertas terpotong?", "Kertas dipotong Budi."], correct: 0, exp: "Ubah menjadi kata kerja imperatif aktif." },
+            { cat: "Kata Serapan", prompt: "Kata 'Nyeri' dan 'Gudeg' diserap dari...", opts: ["Bahasa Asing Barat", "Bahasa Daerah", "Bahasa Arab", "Bahasa Sansekerta"], correct: 1, exp: "Bahasa Indonesia banyak menyerap kosakata dari bahasa daerah nusantara." },
+            { cat: "Infografik Prosedur", prompt: "Ikon nomor 1, 2, 3 pada infografik berfungsi...", opts: ["Menandai harga barang", "Menunjukkan urutan alur kerja", "Hiasan sudut", "Indikator nilai"], correct: 1, exp: "Nomor memandu urutan membaca." },
+            { cat: "Cerpen -> Prosedur", prompt: "Urutan struktur teks prosedur yang benar adalah...", opts: ["Judul - Tujuan - Alat/Bahan - Langkah", "Langkah - Judul - Tujuan", "Alat - Langkah - Judul", "Tujuan - Langkah - Judul"], correct: 0, exp: "Struktur standar dimulai dari Judul hingga Langkah-langkah." },
+            { cat: "Kata Serapan", prompt: "Kata 'Data' tergolong dalam proses penyerapan...", opts: ["Adopsi", "Adaptasi", "Penerjemahan", "Kreasi"], correct: 0, exp: "Adopsi utuh tanpa perubahan huruf." },
+            { cat: "Infografik Prosedur", prompt: "Informasi tersurat dalam infografik adalah...", opts: ["Informasi yang tertulis jelas secara fisik", "Informasi rahasia tersembunyi", "Makna hiasan", "Kesimpulan pribadi"], correct: 0, exp: "Tersurat berarti tertulis gamblang pada teks/gambar." },
+            { cat: "Cerpen -> Prosedur", prompt: "Penggunaan kata '500 ml air' dalam prosedur termasuk...", opts: ["Kalimat kiasan", "Keterangan ukuran/takaran akurat", "Majas metafora", "Konjungsi"], correct: 1, exp: "Takaran akurat memandu pembaca tanpa keraguan." },
+            { cat: "Kata Serapan", prompt: "Proses penyerapan 'Camera' menjadi 'Kamera' terjadi penyesuaian...", opts: ["Ejaan dan huruf C menjadi K", "Jumlah halaman", "Makna kata", "Latar sejarah"], correct: 0, exp: "Penyesuaian ejaan fonetis bahasa Indonesia." },
+            { cat: "Infografik Prosedur", prompt: "Kesimpulan infografik dapat ditemukan dengan cara...", opts: ["Mengabaikan seluruh gambar", "Menghubungkan inti seluruh langkah dan tujuan", "Membaca kata pertama saja", "Menghitung jumlah warna"], correct: 1, exp: "Sintesis seluruh elemen visual dan teks." },
+            { cat: "Cerpen -> Prosedur", prompt: "Kata kerja tindakan berbeda dengan kata sifat karena...", opts: ["Menyatakan aksi fisik nyata", "Menyatakan perasaan hati", "Menyatakan warna", "Menyatakan harga"], correct: 0, exp: "Kata kerja tindakan menggambarkan aktivitas fisik." }
+        ];
+
+        let currentLatihanIndex = 0;
+        let latihanAnswers = {};
+
+        // Modul 5 Tantangan Akhir Bank (15 Questions)
+        const tantanganBank = [
+            { prompt: "1. Teks yang berisi petunjuk langkah-langkah kerja runtut dinamakan...", opts: ["A. Teks Eksplanasi", "B. Teks Prosedur", "C. Cerita Pendek", "D. Teks Laporan"], correct: 1 },
+            { prompt: "2. Manakah yang tergolong kata kerja imperatif?", opts: ["A. Bersihkan", "B. Membersihan", "C. Bersih", "D. Terbersih"], correct: 0 },
+            { prompt: "3. Struktur teks prosedur setelah Judul dan Tujuan adalah...", opts: ["A. Simpulan", "B. Alat dan Bahan", "C. Penutup", "D. Daftar Pustaka"], correct: 1 },
+            { prompt: "4. Kata 'Kemudian, setelah itu, selanjutnya' tergolong...", opts: ["A. Konjungsi Temporal", "B. Kata Sifat", "C. Kata Benda", "D. Keterangan Tempat"], correct: 0 },
+            { prompt: "5. Mengubah cerpen menjadi prosedur berfokus pada...", opts: ["A. Watak tokoh utama", "B. Aksi/kegiatan nyata yang dilakukan tokoh", "C. Latar tempat fiktif", "D. Amanat cerita"], correct: 1 },
+            { prompt: "6. Kata 'Kamera' yang berasal dari 'Camera' mengalami proses...", opts: ["A. Adopsi", "B. Adaptasi", "C. Penerjemahan", "D. Kreasi"], correct: 1 },
+            { prompt: "7. Penyerapan kata 'Download' menjadi 'Unduh' dinamakan...", opts: ["A. Adopsi", "B. Adaptasi", "C. Penerjemahan", "D. Akulturasi"], correct: 2 },
+            { prompt: "8. Manakah kata serapan yang diserap secara ADOPSI?", opts: ["A. Plaza", "B. Apotek", "C. Tetikus", "D. Kamera"], correct: 0 },
+            { prompt: "9. Ejaan kata serapan yang BAKU adalah...", opts: ["A. Apotik", "B. Apotek", "C. Kwalitas", "D. Izin"], correct: 1 },
+            { prompt: "10. Kata serapan 'Gudeg' diserap dari bahasa...", opts: ["A. Inggris", "B. Belanda", "C. Daerah (Jawa)", "D. Arab"], correct: 2 },
+            { prompt: "11. Keunggulan teks prosedur berbentuk infografik adalah...", opts: ["A. Informasi lebih lambat dibaca", "B. Kombinasi teks & visual mempermudah pemahaman", "C. Menggunakan bahasa sanskerta", "D. Hanya boleh berisi gambar tanpa teks"], correct: 1 },
+            { prompt: "12. Fungsi ikon panah pada infografik adalah...", opts: ["A. Penanda alur urutan kerja", "B. Hiasan semata", "C. Penanda ejaan salah", "D. Pengukur suhu"], correct: 0 },
+            { prompt: "13. Kalimat dalam infografik sebaiknya bersifat...", opts: ["A. Ringkas dan komunikatif", "B. Berbelit-belit", "C. Penuh kiasan", "D. Sangat panjang"], correct: 0 },
+            { prompt: "14. Langkah terakhir dalam pembuatan Eco-Enzyme adalah...", opts: ["A. Membuang sampah", "B. Fermentasi 3 bulan & panen", "C. Mencuci botol", "D. Membeli gula"], correct: 1 },
+            { prompt: "15. Informasi tersurat dapat ditemukan langsung dalam...", opts: ["A. Teks atau gambar yang tercantum", "B. Imajinasi pembaca", "C. Kamus asing", "D. Rumus matematika"], correct: 0 }
+        ];
+
+        let currentEvalIndex = 0;
+        let evalAnswers = {};
+        let evalTimerSeconds = 0;
+        let evalTimerInterval = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderM1SortableSteps();
+            renderM2GameQuestion();
+            renderLatihanQuestion();
+            loadTeacherConfigurations();
+            updateGlobalProgress();
+        });
+
+        function switchTab(tabId) {
+            const views = ['home', 'modul-1', 'modul-2', 'modul-3', 'latihan', 'tantangan', 'rekap'];
+            views.forEach(v => {
+                const el = document.getElementById('view-' + v);
+                if (el) el.classList.add('hidden');
+            });
+
+            const target = document.getElementById('view-' + tabId);
+            if (target) target.classList.remove('hidden');
+
+            if (tabId === 'tantangan' && !evalTimerInterval) {
+                startEvalTimer();
+                renderEvalQuestion();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function saveStudentIdentity(nextTab) {
+            const nama = document.getElementById('inputNama').value.trim();
+            const kelas = document.getElementById('inputKelas').value.trim();
+            const absen = document.getElementById('inputAbsen').value.trim();
+
+            if (nama) studentProfile.nama = nama;
+            if (kelas) studentProfile.kelas = kelas;
+            if (absen) studentProfile.absen = absen;
+
+            document.getElementById('hdrStudentName').innerText = studentProfile.nama || "Siswa";
+            document.getElementById('hdrStudentClass').innerText = studentProfile.kelas || "IX";
+            document.getElementById('studentBadgeHeader').classList.remove('hidden');
+
+            switchTab(nextTab);
+        }
+
+        function updateGlobalProgress() {
+            const totalActivities = 6; // M1A, M1B, M2, M3, Latihan, Tantangan
+            const completedCount = completedActivities.size;
+            const percent = Math.round((completedCount / totalActivities) * 100);
+
+            document.getElementById('txtProgressPercent').innerText = `${percent}%`;
+            document.getElementById('txtCompletedCount').innerText = `${completedCount} / ${totalActivities} Aktivitas`;
+            document.getElementById('txtGlobalScore').innerText = globalScore;
+            document.getElementById('barProgress').style.width = `${percent}%`;
+        }
+
+        // --- MODUL 1 LOGIC ---
+        function renderM1SortableSteps() {
+            const container = document.getElementById('m1-step-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            m1StepsOrder.forEach((step, idx) => {
+                const item = document.createElement('div');
+                item.className = "p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 rounded-xl font-semibold text-xs text-slate-800 flex items-center justify-between cursor-pointer transition shadow-sm";
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-lg bg-indigo-200 text-indigo-800 font-extrabold flex items-center justify-center text-[11px]">${idx + 1}</span>
+                        <span>${step.text}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="moveM1Step(${idx}, -1)" class="p-1 text-slate-400 hover:text-indigo-600"><i class="fa-solid fa-chevron-up"></i></button>
+                        <button onclick="moveM1Step(${idx}, 1)" class="p-1 text-slate-400 hover:text-indigo-600"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function moveM1Step(idx, dir) {
+            const target = idx + dir;
+            if (target < 0 || target >= m1StepsOrder.length) return;
+            const temp = m1StepsOrder[idx];
+            m1StepsOrder[idx] = m1StepsOrder[target];
+            m1StepsOrder[target] = temp;
+            renderM1SortableSteps();
+        }
+
+        function checkM1Ordering() {
+            const fb = document.getElementById('m1-ordering-feedback');
+            // Correct order: id 1 -> 2 -> 3 -> 4
+            let isCorrect = true;
+            for (let i = 0; i < m1StepsOrder.length; i++) {
+                if (m1StepsOrder[i].id !== i + 1) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+
+            if (isCorrect) {
+                fb.className = "text-xs font-bold text-emerald-600";
+                fb.innerText = "✨ Luar biasa! Urutan langkah prosedur Anda tepat runtut! (+20 Poin)";
+                if (!completedActivities.has('m1a')) {
+                    completedActivities.add('m1a');
+                    globalScore += 20;
+                    updateGlobalProgress();
+                }
+            } else {
+                fb.className = "text-xs font-bold text-amber-600";
+                fb.innerText = "⚠️ Belum tepat. Urutan ideal: Cuci rempah -> Memarkan jahe -> Rebus -> Saring & sajikan.";
+            }
+        }
+
+        function evaluateM1Form() {
+            const j = document.getElementById('m1FormJudul').value.trim();
+            const t = document.getElementById('m1FormTujuan').value.trim();
+            const a = document.getElementById('m1FormAlat').value.trim();
+            const l = document.getElementById('m1FormLangkah').value.trim();
+            const fb = document.getElementById('m1FormFeedback');
+
+            fb.classList.remove('hidden');
+
+            if (j.length > 5 && t.length > 10 && a.length > 10 && l.length > 15) {
+                fb.className = "p-3 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300";
+                fb.innerText = "🎉 Bagus Sekali! Teks prosedur Anda telah memenuhi kelengkapan struktur (Judul, Tujuan, Alat/Bahan, Langkah-Langkah Imperatif). (+30 Poin)";
+                if (!completedActivities.has('m1b')) {
+                    completedActivities.add('m1b');
+                    globalScore += 30;
+                    updateGlobalProgress();
+                }
+            } else {
+                fb.className = "p-3 rounded-xl text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300";
+                fb.innerText = "⚠️ Mohon lengkapi seluruh kolom judul, tujuan, alat/bahan, dan langkah-langkah secara lebih rinci.";
+            }
+        }
+
+        // --- MODUL 2 LOGIC ---
+        function renderM2GameQuestion() {
+            const curr = m2GameQuestions[m2GameIndex];
+            document.getElementById('m2TargetWord').innerText = curr.word;
+            document.getElementById('m2TargetOrigin').innerText = `Bentuk Asal: ${curr.origin}`;
+            document.getElementById('m2GameProgress').innerText = `Kata ${m2GameIndex + 1} / ${m2GameQuestions.length}`;
+
+            const boxO = document.getElementById('m2OptionsOrigin');
+            const boxP = document.getElementById('m2OptionsProcess');
+            boxO.innerHTML = ''; boxP.innerHTML = '';
+
+            curr.optionsOrigin.forEach(o => {
+                boxO.innerHTML += `<label class="flex items-center gap-2 p-2 bg-white border rounded-xl hover:bg-amber-50 cursor-pointer text-xs"><input type="radio" name="m2o" value="${o}"> <span>${o}</span></label>`;
+            });
+
+            curr.optionsProcess.forEach(p => {
+                boxP.innerHTML += `<label class="flex items-center gap-2 p-2 bg-white border rounded-xl hover:bg-amber-50 cursor-pointer text-xs"><input type="radio" name="m2p" value="${p}"> <span>${p}</span></label>`;
+            });
+        }
+
+        function checkM2GameAnswer() {
+            const selO = document.querySelector('input[name="m2o"]:checked');
+            const selP = document.querySelector('input[name="m2p"]:checked');
+            const fb = document.getElementById('m2GameFeedback');
+            fb.classList.remove('hidden');
+
+            const curr = m2GameQuestions[m2GameIndex];
+            if (selO && selP && selO.value === curr.correctOrigin && selP.value === curr.correctProcess) {
+                fb.className = "p-3 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300";
+                fb.innerText = "✅ Tepat Sekali! Analisis linguistik kata serapan Anda benar!";
+                
+                setTimeout(() => {
+                    m2GameIndex = (m2GameIndex + 1) % m2GameQuestions.length;
+                    renderM2GameQuestion();
+                    fb.classList.add('hidden');
+                }, 1200);
+
+                if (!completedActivities.has('m2')) {
+                    completedActivities.add('m2');
+                    globalScore += 25;
+                    updateGlobalProgress();
+                }
+            } else {
+                fb.className = "p-3 rounded-xl text-xs font-bold bg-rose-100 text-rose-900 border border-rose-300";
+                fb.innerText = "❌ Kurang tepat. Perhatikan kembali asal bahasa dan proses penyesuaian ejaannya.";
+            }
+        }
+
+        // --- MODUL 3 LOGIC ---
+        function showInfographicDetail(stepNum) {
+            const details = {
+                1: "Langkah 1 (Bahan Organik): Menggunakan sampah kulit buah segar (seperti jeruk, nanas, apel) agar ramah lingkungan dan tidak menimbulkan bau pembusukan.",
+                2: "Langkah 2 (Takaran Akurat): Menggunakan takaran pasti rasio 1 Gula Molase : 3 Sampah Organik : 10 Air Bersih untuk optimalisasi perkembangbiakan enzim.",
+                3: "Langkah 3 (Wadah Kedap Plastik): Memilih wadah plastik bermulut lebar karena mampu menyesuaikan tekanan gas fermentasi tanpa pecah.",
+                4: "Langkah 4 (Masa Panen 3 Bulan): Memerlukan waktu 90 hari fermentasi alami hingga menghasilkan cairan pembersih kaya enzim alami."
+            };
+            document.getElementById('m3HotspotText').innerText = details[stepNum];
+        }
+
+        function checkM3Hots() {
+            const sel = document.querySelector('input[name="m3Hots"]:checked');
+            const fb = document.getElementById('m3HotsFeedback');
+            fb.classList.remove('hidden');
+
+            if (sel && sel.value === 'B') {
+                fb.className = "p-3 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300";
+                fb.innerText = "✨ Analisis Kritis Sangat Tepat! Reaksi fermentasi menghasilkan gas karbon dioksida. Wadah kaca yang rigid dapat retak/meledak jika tekanan meningkat, sedangkan wadah plastik lebih elastis dan aman.";
+                if (!completedActivities.has('m3')) {
+                    completedActivities.add('m3');
+                    globalScore += 25;
+                    updateGlobalProgress();
+                }
+            } else {
+                fb.className = "p-3 rounded-xl text-xs font-bold bg-rose-100 text-rose-900 border border-rose-300";
+                fb.innerText = "❌ Pilihan kurang tepat. Pertimbangkan faktor tekanan gas hasil fermentasi mikroba.";
+            }
+        }
+
+        // --- MODUL 4 LATIHAN LOGIC ---
+        function renderLatihanQuestion() {
+            const item = latihanBank[currentLatihanIndex];
+            document.getElementById('quizBadgeNum').innerText = `Soal ${currentLatihanIndex + 1} / ${latihanBank.length}`;
+            document.getElementById('quizCatBadge').innerText = `Kategori: ${item.cat}`;
+            document.getElementById('quizQuestionText').innerText = `${currentLatihanIndex + 1}. ${item.prompt}`;
+
+            const list = document.getElementById('quizOptionsList');
+            list.innerHTML = '';
+
+            item.opts.forEach((optStr, idx) => {
+                const isSelected = latihanAnswers[currentLatihanIndex] === idx;
+                list.innerHTML += `
+                    <label class="flex items-center gap-3 p-3 rounded-xl border text-xs cursor-pointer transition ${isSelected ? 'bg-indigo-50 border-indigo-500 font-bold text-indigo-900' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'}">
+                        <input type="radio" name="lat_opt" value="${idx}" ${isSelected ? 'checked' : ''} onchange="selectLatihanOption(${idx})" class="w-4 h-4 text-indigo-600">
+                        <span>${optStr}</span>
+                    </label>
+                `;
+            });
+
+            const expBox = document.getElementById('quizExplanationBox');
+            if (latihanAnswers[currentLatihanIndex] !== undefined) {
+                const userAns = latihanAnswers[currentLatihanIndex];
+                const isCorrect = (userAns === item.correct);
+                expBox.classList.remove('hidden');
+                document.getElementById('quizFeedbackHeader').innerText = isCorrect ? "✅ Benar! Hebat!" : "❌ Belum tepat. Perhatikan pembahasan:";
+                document.getElementById('quizFeedbackHeader').className = `font-extrabold text-sm block ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`;
+                document.getElementById('quizExplanationText').innerText = item.exp;
+            } else {
+                expBox.classList.add('hidden');
+            }
+
+            document.getElementById('btnQuizPrev').disabled = (currentLatihanIndex === 0);
+        }
+
+        function selectLatihanOption(idx) {
+            latihanAnswers[currentLatihanIndex] = idx;
+            renderLatihanQuestion();
+
+            if (!completedActivities.has('latihan') && Object.keys(latihanAnswers).length >= 10) {
+                completedActivities.add('latihan');
+                globalScore += 30;
+                updateGlobalProgress();
+            }
+        }
+
+        function navigateLatihan(dir) {
+            const target = currentLatihanIndex + dir;
+            if (target >= 0 && target < latihanBank.length) {
+                currentLatihanIndex = target;
+                renderLatihanQuestion();
+            }
+        }
+
+        function shuffleAndResetLatihan() {
+            latihanBank.sort(() => Math.random() - 0.5);
+            latihanAnswers = {};
+            currentLatihanIndex = 0;
+            renderLatihanQuestion();
+        }
+
+        // --- MODUL 5 TANTANGAN AKHIR LOGIC ---
+        function startEvalTimer() {
+            evalTimerInterval = setInterval(() => {
+                evalTimerSeconds++;
+                const m = String(Math.floor(evalTimerSeconds / 60)).padStart(2, '0');
+                const s = String(evalTimerSeconds % 60).padStart(2, '0');
+                document.getElementById('evalTimer').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function renderEvalQuestion() {
+            const item = tantanganBank[currentEvalIndex];
+            document.getElementById('evalProgressNum').innerText = `Soal ${currentEvalIndex + 1} / ${tantanganBank.length}`;
+            document.getElementById('evalQuestionPrompt').innerText = item.prompt;
+
+            const list = document.getElementById('evalOptionsList');
+            list.innerHTML = '';
+
+            item.opts.forEach((optStr, idx) => {
+                const isSelected = evalAnswers[currentEvalIndex] === idx;
+                list.innerHTML += `
+                    <label class="flex items-center gap-3 p-3 rounded-xl border text-xs cursor-pointer transition ${isSelected ? 'bg-purple-50 border-purple-500 font-bold text-purple-900' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'}">
+                        <input type="radio" name="eval_opt" value="${idx}" ${isSelected ? 'checked' : ''} onchange="selectEvalOption(${idx})" class="w-4 h-4 text-purple-600">
+                        <span>${optStr}</span>
+                    </label>
+                `;
+            });
+
+            document.getElementById('btnEvalPrev').disabled = (currentEvalIndex === 0);
+            document.getElementById('btnEvalNext').innerText = (currentEvalIndex === tantanganBank.length - 1) ? "Selesai & Lihat Rekap" : "Selanjutnya";
+        }
+
+        function selectEvalOption(idx) {
+            evalAnswers[currentEvalIndex] = idx;
+        }
+
+        function prevEvalQuestion() {
+            if (currentEvalIndex > 0) { currentEvalIndex--; renderEvalQuestion(); }
+        }
+
+        function nextEvalQuestion() {
+            if (currentEvalIndex < tantanganBank.length - 1) {
+                currentEvalIndex++;
+                renderEvalQuestion();
+            } else {
+                finishEvalAndShowReport();
+            }
+        }
+
+        function finishEvalAndShowReport() {
+            if (evalTimerInterval) clearInterval(evalTimerInterval);
+
+            let correctCount = 0;
+            tantanganBank.forEach((q, i) => {
+                if (evalAnswers[i] === q.correct) correctCount++;
+            });
+
+            const score = Math.round((correctCount / tantanganBank.length) * 100);
+
+            // Populate Report
+            document.getElementById('rptNama').innerText = studentProfile.nama || "Siswa";
+            document.getElementById('rptKelasAbsen').innerText = `${studentProfile.kelas || "IX"} / ${studentProfile.absen || "-"}`;
+            document.getElementById('rptWaktu').innerText = document.getElementById('evalTimer').innerText;
+            document.getElementById('rptScoreBig').innerText = score;
+            document.getElementById('rptScoreDetail').innerText = `${correctCount} dari 15 Soal Benar (${score}%)`;
+
+            const isPass = (score >= 75);
+            document.getElementById('rptStatus').innerText = isPass ? "TUNTAS (Sangat Baik) 🏆" : "REMEDIAL (Perlu Belajar) 📖";
+            document.getElementById('rptStatus').className = `font-extrabold text-xs ${isPass ? 'text-emerald-600' : 'text-rose-600'}`;
+
+            if (score >= 90) {
+                document.getElementById('rptRecommendation').innerText = "Selamat! Pemahaman Anda sangat prima pada seluruh indikator Teks Prosedur, Kata Serapan, dan Infografik!";
+            } else if (score >= 75) {
+                document.getElementById('rptRecommendation').innerText = "Bagus! Anda telah mencapai KKM. Tinjau kembali beberapa soal latihan untuk memperdalam konsep.";
+            } else {
+                document.getElementById('rptRecommendation').innerText = "Perlu Belajar Kembali: Pelajari ulang Modul 1 (kalimat imperatif) dan Modul 2 (proses adaptasi/adopsi kata serapan).";
+            }
+
+            if (!completedActivities.has('tantangan')) {
+                completedActivities.add('tantangan');
+                globalScore += score;
+                updateGlobalProgress();
+            }
+
+            switchTab('rekap');
+        }
+
+        // --- GOOGLE SHEETS & DOCS INTEGRATION LOGIC ---
+        function sendScoresToGoogleSheets() {
+            const status = document.getElementById('sheetsSubmitStatus');
+            status.innerText = "⏳ Mengirimkan data nilai ke Google Sheets Guru...";
+
+            let correctCount = 0;
+            tantanganBank.forEach((q, i) => {
+                if (evalAnswers[i] === q.correct) correctCount++;
+            });
+            const score = Math.round((correctCount / tantanganBank.length) * 100);
+
+            const payload = {
+                timestamp: new Date().toLocaleString('id-ID'),
+                nama: studentProfile.nama || "Siswa",
+                kelas: studentProfile.kelas || "IX",
+                absen: studentProfile.absen || "-",
+                modul1: completedActivities.has('m1a') ? "Selesai" : "Belum",
+                modul2: completedActivities.has('m2') ? "Selesai" : "Belum",
+                modul3: completedActivities.has('m3') ? "Selesai" : "Belum",
+                skorLatihan: `${Object.keys(latihanAnswers).length}/20`,
+                nilaiEvaluasi: score,
+                persentase: `${score}%`,
+                status: (score >= 75) ? "TUNTAS" : "REMEDIAL"
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                status.className = "text-center text-xs font-bold text-emerald-600 mt-2";
+                status.innerText = "✅ Rekap nilai berhasil dikirimkan ke Spreadsheet Guru!";
+            })
+            .catch(err => {
+                status.className = "text-center text-xs font-bold text-rose-500 mt-2";
+                status.innerText = "❌ Terjadi kendala pengiriman data. Periksa jaringan internet.";
+            });
+        }
+
+        function toggleTeacherModal() {
+            document.getElementById('teacherModal').classList.toggle('hidden');
+        }
+
+        function saveTeacherName() {
+            const val = document.getElementById('inputTeacherName').value;
+            localStorage.setItem('cfg_teacher_name', val);
+        }
+
+        function saveTeacherConfigurations() {
+            const s = document.getElementById('cfgScriptUrl').value.trim();
+            const m = document.getElementById('cfgDocsMateri').value.trim();
+            const l = document.getElementById('cfgDocsLKPD').value.trim();
+
+            if (s) GOOGLE_SCRIPT_URL = s;
+            if (m) GOOGLE_DOCS_MATERI = m;
+            if (l) GOOGLE_DOCS_LKPD = l;
+
+            localStorage.setItem('cfg_script_url', GOOGLE_SCRIPT_URL);
+            localStorage.setItem('cfg_docs_materi', GOOGLE_DOCS_MATERI);
+            localStorage.setItem('cfg_docs_lkpd', GOOGLE_DOCS_LKPD);
+
+            alert("Konfigurasi Guru berhasil diperbarui!");
+            toggleTeacherModal();
+        }
+
+        function loadTeacherConfigurations() {
+            const t = localStorage.getItem('cfg_teacher_name');
+            const s = localStorage.getItem('cfg_script_url');
+            const m = localStorage.getItem('cfg_docs_materi');
+            const l = localStorage.getItem('cfg_docs_lkpd');
+
+            if (t) document.getElementById('inputTeacherName').value = t;
+            if (s) { GOOGLE_SCRIPT_URL = s; document.getElementById('cfgScriptUrl').value = s; }
+            if (m) { GOOGLE_DOCS_MATERI = m; document.getElementById('cfgDocsMateri').value = m; }
+            if (l) { GOOGLE_DOCS_LKPD = l; document.getElementById('cfgDocsLKPD').value = l; }
+        }
+
+        function openConfiguredDoc(type) {
+            if (type === 'materi') window.open(GOOGLE_DOCS_MATERI, '_blank');
+            else if (type === 'lkpd') window.open(GOOGLE_DOCS_LKPD, '_blank');
+        }
+
+        function copyGasCode() {
+            const code = document.getElementById('gasCodeBlock').value;
+            navigator.clipboard.writeText(code).then(() => {
+                alert("Kode Google Apps Script berhasil disalin!");
+            });
+        }
+    </script>
+</body>
+</html>
